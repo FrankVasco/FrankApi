@@ -2,6 +2,7 @@ package API_Testing.Utils;
 
 import com.github.javafaker.Faker;
 import io.restassured.response.Response;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -14,13 +15,18 @@ import static io.restassured.RestAssured.given;
 public class BaseMethods {
 
 
-    int statusCode = 200;
-    //Se puede poner en enum o beforetest
-    String apiURL ="https://6083ca869b2bed00170403bc.mockapi.io/BankTransaction";
+
+    String apiURL;
+
+    public BaseMethods(String apiURL){
+        this.apiURL = apiURL;
+    }
 
 
-
-
+    /***
+     * This method validate the number of register that the API has
+     * @return it returns a int with the number of elements
+     */
     public int validateNumberOfElements(){
         Response response;
         response = given().contentType("application/json").when().get(apiURL);
@@ -31,6 +37,9 @@ public class BaseMethods {
         return numeros.size();
     }
 
+    /***
+     * This methods delets al the elements that the APIs
+     */
     public void deleteElements(){
      Response response;
 
@@ -40,11 +49,17 @@ public class BaseMethods {
         }
     }
 
+    /***
+     * Validates the endPoint conection
+     */
     public void validateConectionToEndpoint(){
-        given().when().get(apiURL).then().statusCode(statusCode);
+        given().when().get(apiURL).then().statusCode(200);
     }
 
-    public void PostData() {
+    /***
+     * This methods post data to the API after getting getting a List with fake data
+     */
+    public void postData() {
         Faker faker = new Faker();
         Map<String, String> user = new HashMap<String, String>();
 
@@ -74,143 +89,79 @@ public class BaseMethods {
     }
 
 
-    @Test
-    public void testMethod(){
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-public void pendiente(){
-
-
-}
-
-
-
-
-
-
-public void getMethod() {
-
-
-        //VAlida que el statusCode sea 200 sis se pone 201, El test falla
-        given().when().get(apiURL).then().statusCode(statusCode);
-
-        //Muestra toda la informacion del GET, Muestra el JSON de la respuesta
-        //Si no existen datos, me genera []
-        given().when().get(apiURL).then().statusCode(statusCode).log().all();
-
-        //En la variable response, se trae toda la info del endpoint
+    /***
+     * Method to post data to the API
+     * @param data
+     */
+    public void post(String data){
         Response response;
-        response = given().contentType("application/json").when().get(apiURL);
+        response = given().contentType("application/json").body(data).when().post(apiURL);
 
-        //Se puede extraer la info en una variable
-        response.then().extract().response();
-
-        response.prettyPrint();
-
-        //Va a traer solo los ids de todos los elementos
-        System.out.println(response.jsonPath().getString("id"));
-        //Va a traer solo los nombre de todos los elementos
-        System.out.println(response.jsonPath().getString("first_name"));
-
-        //Assertions
-
-    }
-
-
-
-    public void testPost () {
-
-        // given().when().body(json).post("https://5d6fd3a8482b530014d2e8da.mockapi.io/mock/api/v1/users").then().statusCode(201).log().all();
-
-        //Given
-        Map<String, String> user = new HashMap<String, String>();
-        //user.put("id", "20");
-        user.put("first_name", "Pepita");
-        user.put("last_name", "Hernandez");
-        user.put("email", "email@test.com");
-        user.put("country", "Colombia");
-        user.put("telephone", "11111");
-        user.put("active", "true");
-        user.put("job_title", "TAE");
-
-        Response response;
-
-        //WHEN
-        response = given().contentType("application/json").body(user).when().post(apiURL);
-
-        //THEN
         response.then().extract().response();
         response.then().statusCode(201);
-        //response.prettyPrint();
+    }
 
-        System.out.println(response.jsonPath().getString("id"));
-        System.out.println(response.jsonPath().getString("first_name"));
-        //Assertions
-
+    /***
+     * Method to get the GET request to the API
+     * @return
+     */
+    public Response getRequest(){
+        Response response;
+        response = given().contentType("application/json").when().get(apiURL);
+        return response;
     }
 
 
-    public void testUpdate () {
+    /***
+     * Method to valida if the email is already in one of the registers
+     * @param email Send the email as a parameter
+     * @param response get the response from the get method
+     * @return Return a boolean telling if the email already exists
+     */
+    public boolean emailValidator(String email, Response response){
 
-        // given().when().body(json).post("https://5d6fd3a8482b530014d2e8da.mockapi.io/mock/api/v1/users").then().statusCode(201).log().all();
+        List<Object> emails = new ArrayList();
+        for (int i = 1; i < validateNumberOfElements(); i++) {
+            emails = response.jsonPath().getList("email");
+            System.out.println(emails);
+        }
+        boolean emailExists = emails.contains(email);
 
-        //Given
-        Map<String, String> user = new HashMap<String, String>();
-        //user.put("id", "20");
-        user.put("first_name", "Pepita");
-        user.put("last_name", "Perez");
-        user.put("email", "email1@test.com");
-        user.put("country", "Colombia");
-        user.put("telephone", "1122211");
-        user.put("active", "false");
-        user.put("job_title", "TAE");
-
-        Response response;
-
-        //WHEN
-        response = given().contentType("application/json").body(user).when().put("https://5d6fd3a8482b530014d2e8da.mockapi.io/mock/api/v1/users/1");
-
-        //THEN
-        response.then().extract().response();
-        response.then().statusCode(200);
-        response.prettyPrint();
-
-        System.out.println(response.jsonPath().getString("id"));
-        System.out.println(response.jsonPath().getString("first_name"));
-        //Assertions
-
+        return emailExists;
     }
 
 
+    /***
+     * Method to do a put request for changing the accountNumber
+     * @param id the id of the register that is going to be change
+     * @param accountNumber The value of the account number that is going to be set
+     */
+    public void putRequest(int id, String accountNumber){
 
-    public void testDelete () {
+    Response response;
+    response = given().contentType("application/json").when().get(apiURL+"/"+id);
+    System.out.println(response);
 
-        // given().when().get("https://5d6fd3a8482b530014d2e8da.mockapi.io/mock/api/v1/users").then().statusCode(200).log().all();
+    Map<String, String> user = new HashMap<String, String>();
+    user.put("name", response.jsonPath().getString("name"));
+    user.put("lastName", response.jsonPath().getString("lastName"));
+    user.put("accountNumber", accountNumber);
+    user.put("amount", response.jsonPath().getString("amount"));
+    user.put("transactionType", response.jsonPath().getString("transactionType"));
+    user.put("email", response.jsonPath().getString("email"));
+    user.put("active", response.jsonPath().getString("active"));
+    user.put("country", response.jsonPath().getString("country"));
+    user.put("telephone", response.jsonPath().getString("telephone"));
 
-        Response response;
 
-        response = given().contentType("application/json").when().delete("https://608383115dbd2c001757b7fd.mockapi.io/BankTransactions/3");
+    response = given().contentType("application/json").body(user).when().put(apiURL+"/"+id);
 
-        response.then().extract().response();
-        response.then().statusCode(404);
-        response.prettyPrint();
+    //THEN
+    response.then().extract().response();
+    response.then().statusCode(200);
+    response.prettyPrint();
 
-
-
-        //Assertions
+    System.out.println(response.jsonPath().getString("accountNumber"));
 
     }
 

@@ -11,7 +11,10 @@ public class DataGeneratorPOJO   {
 
     Faker faker = new Faker();
 
-
+    /***
+     * Generate Mock data using the library Faker for creating the objects
+     * @return returns a bankAccount object
+     */
  public BankTransactionPOJO generateData(){
 
         BankTransactionPOJO bankTransactionPOJO = new BankTransactionPOJO();
@@ -29,7 +32,10 @@ public class DataGeneratorPOJO   {
         return bankTransactionPOJO;
     }
 
-
+    /***
+     * Generate a arrayList with all the object of mock date generated in the method
+     * @return
+     */
     public ArrayList<BankTransactionPOJO>  bankListGenerate() {
 
         ArrayList<BankTransactionPOJO> bankList = new ArrayList<BankTransactionPOJO>();
@@ -40,8 +46,6 @@ public class DataGeneratorPOJO   {
         }
         return bankList;
     }
-
-
 
 
 
