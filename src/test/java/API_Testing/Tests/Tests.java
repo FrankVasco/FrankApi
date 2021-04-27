@@ -20,14 +20,16 @@ public class Tests {
     }
 
     @Test(priority = 4)
-    public void test1(){
+    public void test1() throws InterruptedException {
         bankTransactionAPI.cleanEndpoint();
         Assert.assertEquals(true, bankTransactionAPI.isEndpointEmpty());
     }
 
     @Test(priority = 1)
-    public void test2(){
+    public void test2() throws InterruptedException {
+        int initialRegisters = bankTransactionAPI.validateNumberOfElements();
         bankTransactionAPI.postRequestwithPOJO();
+        Assert.assertEquals(initialRegisters, bankTransactionAPI.validateNumberOfElements()-20);
     }
 
     @Test(priority = 2)

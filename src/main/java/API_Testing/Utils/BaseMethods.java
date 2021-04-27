@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,21 +32,22 @@ public class BaseMethods {
         Response response;
         response = given().contentType("application/json").when().get(apiURL);
 
-        List<Object> numeros = new ArrayList();
-        numeros = response.jsonPath().getList("id");
-        System.out.println(numeros.size());
-        return numeros.size();
+        List<Object> numberOfElemento = new ArrayList();
+        numberOfElemento = response.jsonPath().getList("id");
+        //System.out.println(numeros.size());
+        return numberOfElemento.size();
     }
 
     /***
      * This methods delets al the elements that the APIs
      */
-    public void deleteElements(){
-     Response response;
+    public void deleteElements() throws InterruptedException {
 
-        for(int id=0; id<50; id++){
+        int limit =validateNumberOfElements();
+        for(int id=0; id<limit+1; id++){
          String uri = "https://6083ca869b2bed00170403bc.mockapi.io/BankTransaction/" + id;
-            response = given().contentType("application/json").when().delete(uri);
+            given().contentType("application/json").when().delete(uri);
+            Thread.sleep(1000);
         }
     }
 
@@ -56,11 +58,19 @@ public class BaseMethods {
         given().when().get(apiURL).then().statusCode(200);
     }
 
+
+    public int get(){
+        Response response;
+        response = given().contentType("application/json").when().get(apiURL);
+        List<Object> idNumber = response.jsonPath().getList("id");
+        return idNumber.size();
+    }
+
     /***
      * This methods post data to the API after getting getting a List with fake data
      */
-    public void postData() {
-        Faker faker = new Faker();
+
+    public void postData() throws InterruptedException {
         Map<String, String> user = new HashMap<String, String>();
 
         DataGeneratorPOJO dataGeneratorPOJO = new DataGeneratorPOJO();
@@ -84,7 +94,8 @@ public class BaseMethods {
             response = given().contentType("application/json").body(user).when().post(apiURL);
 
             response.then().extract().response();
-            response.then().statusCode(201);
+            System.out.println(response.statusCode());
+            Thread.sleep(1000);
         }
     }
 
@@ -129,6 +140,8 @@ public class BaseMethods {
 
         return emailExists;
     }
+
+
 
 
     /***

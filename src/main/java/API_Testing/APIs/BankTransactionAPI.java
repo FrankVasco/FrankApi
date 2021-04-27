@@ -13,7 +13,7 @@ public class BankTransactionAPI extends BaseMethods {
     /***
      * Method to clean the endpoint using the base Method
      */
-    public void cleanEndpoint(){
+    public void cleanEndpoint() throws InterruptedException {
         if(validateNumberOfElements()>0) {
             deleteElements();
         }
@@ -34,7 +34,7 @@ public class BankTransactionAPI extends BaseMethods {
     /***
      * Method for post data using the POJO
      */
-    public void postRequestwithPOJO(){
+    public void postRequestwithPOJO() throws InterruptedException {
         postData();
     }
 
@@ -54,6 +54,7 @@ public class BankTransactionAPI extends BaseMethods {
     public void putRequestMethod(int id, String newAccountNumer){
         putRequest(id, newAccountNumer);
     }
+
 
 
 

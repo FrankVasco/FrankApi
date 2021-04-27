@@ -9,6 +9,12 @@ import java.util.List;
 
 public class DataGeneratorPOJO   {
 
+
+
+    public void DataGeneratorPOJO(){
+
+    }
+
     Faker faker = new Faker();
 
     /***
@@ -24,6 +30,11 @@ public class DataGeneratorPOJO   {
         bankTransactionPOJO.setAccountNumber( faker.number().toString());
         bankTransactionPOJO.setAmount(faker.number().digit());
         bankTransactionPOJO.setTransactionType(faker.finance().bic());
+
+
+        String email = faker.internet().emailAddress();
+
+        bankTransactionPOJO.setEmail(faker.internet().emailAddress());
         bankTransactionPOJO.setEmail(faker.internet().emailAddress());
         bankTransactionPOJO.setActive(faker.bool().toString());
         bankTransactionPOJO.setCountry(faker.address().country());
@@ -39,13 +50,14 @@ public class DataGeneratorPOJO   {
     public ArrayList<BankTransactionPOJO>  bankListGenerate() {
 
         ArrayList<BankTransactionPOJO> bankList = new ArrayList<BankTransactionPOJO>();
-
         for (int i = 0; i < 20 ; i++) {
             bankList.add(i, generateData());
             System.out.println(bankList);
         }
         return bankList;
     }
+
+
 
 
 
